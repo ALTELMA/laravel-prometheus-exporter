@@ -5,7 +5,6 @@ namespace Altelma\LaravelPrometheusExporter\Middleware;
 use Closure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Route;
 
 class PrometheusLumenRouteMiddleware
 {
@@ -19,12 +18,12 @@ class PrometheusLumenRouteMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $routeCollection = Route::getRoutes();
-        if (is_null($routeCollection) || !isset($routeCollection[1]['uri'])) {
+        $route = $request->route();
+        if (is_null($route) || !isset($route[1]['uri'])) {
             return $next($request);
         }
 
-        $matchedRoute = $routeCollection[1]['uri'];
+        $matchedRoute = $route[1]['uri'];
 
         $start = microtime(true);
         $response = $next($request);
