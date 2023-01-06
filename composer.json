@@ -1,0 +1,33 @@
+{
+    "name": "altelma/laravel-prometheus-exporter",
+    "description": "A Prometheus exporter for Laravel and Lumen",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "prometheus",
+        "php"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ALTELMA",
+            "email": "nrohtgnohp@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "promphp/prometheus_client_php": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altelma\\LaravelPrometheusExporter\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Altelma\\LaravelPrometheusExporter\\Providers\\PrometheusServiceProvider"
+            ]
+        }
+    }
+}
