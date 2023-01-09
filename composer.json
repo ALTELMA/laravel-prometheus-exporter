@@ -16,6 +16,7 @@
     ],
     "require": {
         "php": ">=7.4",
+        "illuminate/routing": "*",
         "promphp/prometheus_client_php": "^2.6"
     },
     "autoload": {
