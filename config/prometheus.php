@@ -15,10 +15,9 @@ return [
             'persistent_connections' => env('PROMETHEUS_REDIS_PERSISTENT_CONNECTIONS', false),
             'prefix' => env('PROMETHEUS_REDIS_PREFIX', 'PROMETHEUS_'),
             'prefix_dynamic' => env('PROMETHEUS_REDIS_PREFIX_DYNAMIC', true),
+            'name' => env('PROMETHEUS_REDIS_NAME', env('APP_NAME')),
         ],
-
     ],
-
     'collect_full_sql_query' => env('PROMETHEUS_COLLECT_FULL_SQL_QUERY', true),
     'collectors' => [
         // \Your\ExporterClass::class,
