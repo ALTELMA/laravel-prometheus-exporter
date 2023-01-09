@@ -45,6 +45,19 @@ PROMETHEUS_REDIS_PERSISTENT_CONNECTIONS=0
 PROMETHEUS_REDIS_PREFIX=PROMETHEUS_
 ```
 
+### Metrics with multiple pods in k8s
+If you want to expose metrics endpoint with application that running in k8s. It needs to store the same information with a single endpoint. So you need to add config like below
+```dotenv
+PROMETHEUS_REDIS_NAME="<your_custom_name>"
+```
+
+You need to ensure config set like this and this support `Redis` adapter only
+```dotenv
+PROMETHEUS_REDIS_PREFIX_DYNAMIC=true
+PROMETHEUS_REDIS_PREFIX=<your_prefix_name>
+PROMETHEUS_REDIS_NAME="<your_custom_name>"
+```
+
 ## Metrics
 
 The package allows you to observe metrics on the application routes. Metrics on request method, request path and status code.
