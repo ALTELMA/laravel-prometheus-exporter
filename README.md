@@ -88,6 +88,14 @@ $app->routeMiddleware([
 ]);
 ```
 
+## Protect metrics endpoint
+If you need to prevent someone see your routes in `/metrics` you can add middleware to protect your endpoint. Now we start to support only basic_auth to protect you metrics endpoint
+```dotenv
+PROMETHEUS_METRICS_ROUTE_AUTH_ENABLED=true
+PROMETHEUS_METRICS_ROUTE_AUTH_USERNAME=<basic_auth_username>
+PROMETHEUS_METRICS_ROUTE_AUTH_PASSWORD=<basic_auth_password>
+```
+
 ## สนับสนุนผมได้นะ ☕
 สวัสดีเพื่อนๆ ทุกคนนะครับ หากมีข้อเสนอแนะอะไร แนะนำมาได้นะครับ
 นอกจากนี้ เพื่อนๆ สามารถแวะไปอ่านบทความของผมเพิ่มเติมได้ [ที่นี่](https://medium.com/@altelma) ครับ

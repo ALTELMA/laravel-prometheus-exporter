@@ -4,9 +4,12 @@ namespace Altelma\LaravelPrometheusExporter\Providers;
 
 use Altelma\LaravelPrometheusExporter\Controllers\LaravelMetricsController;
 use Altelma\LaravelPrometheusExporter\Controllers\LumenMetricsController;
+use Altelma\LaravelPrometheusExporter\Middleware\MetricsAuthenticateWithBasicAuth;
 use Altelma\LaravelPrometheusExporter\PrometheusExporter;
 use Altelma\LaravelPrometheusExporter\StorageAdapterFactory;
 use Illuminate\Foundation\Application as LaravelApplication;
+use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
@@ -89,18 +92,36 @@ class PrometheusServiceProvider extends ServiceProvider
         }
 
         $router = $this->app['router'];
+
         if ($this->app instanceof LaravelApplication) {
-            $router->get(
-                config('prometheus.metrics_route_path'),
-                LaravelMetricsController::class . '@getMetrics'
-            )->name('metrics');
+            if (config('prometheus.metrics_route_auth_enabled')) {
+                $router->aliasMiddleware('prometheus.auth.basic', MetricsAuthenticateWithBasicAuth::class);
+                $router->get(
+                    config('prometheus.metrics_route_path'),
+                    LaravelMetricsController::class . '@getMetrics'
+                )->name('metrics')->middleware(['prometheus.auth.basic']);
+            } else {
+                $router->get(
+                    config('prometheus.metrics_route_path'),
+                    LaravelMetricsController::class . '@getMetrics'
+                )->name('metrics');
+            }
         } else {
+            $routeConfig = [
+                'as' => 'metrics',
+                'uses' => LumenMetricsController::class . '@getMetrics',
+            ];
+
+            if (config('prometheus.metrics_route_auth_enabled')) {
+                $this->app->routeMiddleware([
+                    'prometheus.auth.basic' => MetricsAuthenticateWithBasicAuth::class,
+                ]);
+                $routeConfig['middleware'] = 'prometheus.auth.basic';
+            }
+
             $router->get(
                 config('prometheus.metrics_route_path'),
-                [
-                    'as' => 'metrics',
-                    'uses' => LumenMetricsController::class . '@getMetrics',
-                ]
+                $routeConfig
             );
         }
     }

@@ -4,6 +4,13 @@ return [
     'namespace' => env('PROMETHEUS_NAMESPACE', 'app'),
     'metrics_route_enabled' => env('PROMETHEUS_METRICS_ROUTE_ENABLED', true),
     'metrics_route_path' => env('PROMETHEUS_METRICS_ROUTE_PATH', 'metrics'),
+    'metrics_route_auth_enabled' => env('PROMETHEUS_METRICS_ROUTE_AUTH_ENABLED', false),
+    'metrics_route_auth' => [
+        'basic_auth' => [
+            'username' => env('PROMETHEUS_METRICS_ROUTE_AUTH_USERNAME'),
+            'password' => env('PROMETHEUS_METRICS_ROUTE_AUTH_PASSWORD'),
+        ]
+    ],
     'storage_adapter' => env('PROMETHEUS_STORAGE_ADAPTER', 'memory'),
     'storage_adapters' => [
         'redis' => [
