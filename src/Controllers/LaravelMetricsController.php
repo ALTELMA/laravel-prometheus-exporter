@@ -3,8 +3,8 @@
 namespace Altelma\LaravelPrometheusExporter\Controllers;
 
 use Altelma\LaravelPrometheusExporter\PrometheusExporter;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Routing\Controller;
+use Illuminate\Routing\ResponseFactory;
 use Prometheus\RenderTextFormat;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,7 +26,7 @@ class LaravelMetricsController extends Controller
      */
     public function __construct(ResponseFactory $responseFactory, PrometheusExporter $prometheusExporter)
     {
-        $this->responseFactory = $responseFactory;
+        $this->responseFactory    = $responseFactory;
         $this->prometheusExporter = $prometheusExporter;
     }
 
@@ -43,10 +43,10 @@ class LaravelMetricsController extends Controller
         $metrics = $this->prometheusExporter->export();
 
         $renderer = new RenderTextFormat();
-        $result = $renderer->render($metrics);
+        $result   = $renderer->render($metrics);
 
         return $this->responseFactory->make($result, Response::HTTP_OK, [
-            'Content-Type' => RenderTextFormat::MIME_TYPE
+            'Content-Type' => RenderTextFormat::MIME_TYPE,
         ]);
     }
 }

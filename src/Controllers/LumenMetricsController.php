@@ -35,7 +35,7 @@ class LumenMetricsController extends Controller
         $metrics = $this->prometheusExporter->export();
 
         $renderer = new RenderTextFormat();
-        $result = $renderer->render($metrics);
+        $result   = $renderer->render($metrics);
 
         return response($result, Response::HTTP_OK, ['Content-Type' => RenderTextFormat::MIME_TYPE]);
     }

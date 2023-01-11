@@ -49,8 +49,8 @@ class StorageAdapterFactory
     protected function makeRedisAdapter(array $config): Redis
     {
         if (isset($config['prefix'])) {
-            $redisKeyName = !empty($config['name']) ? $config['name'] : $this->hostname;
-            $prefix = !empty($config['prefix_dynamic']) ?
+            $redisKeyName = ! empty($config['name']) ? $config['name'] : $this->hostname;
+            $prefix       = ! empty($config['prefix_dynamic']) ?
                 sprintf('%s_%s_', $config['prefix'], $redisKeyName) : $config['prefix'];
             Redis::setPrefix($prefix);
         }

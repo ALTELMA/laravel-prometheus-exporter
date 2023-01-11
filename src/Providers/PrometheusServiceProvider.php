@@ -8,8 +8,6 @@ use Altelma\LaravelPrometheusExporter\Middleware\MetricsAuthenticateWithBasicAut
 use Altelma\LaravelPrometheusExporter\PrometheusExporter;
 use Altelma\LaravelPrometheusExporter\StorageAdapterFactory;
 use Illuminate\Foundation\Application as LaravelApplication;
-use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
@@ -43,9 +41,9 @@ class PrometheusServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../config/prometheus.php', 'prometheus');
 
         $this->app->singleton(PrometheusExporter::class, function ($app) {
-            $adapter = $app['prometheus.storage_adapter'];
+            $adapter    = $app['prometheus.storage_adapter'];
             $prometheus = new CollectorRegistry($adapter, true);
-            $exporter = new PrometheusExporter(config('prometheus.namespace'), $prometheus);
+            $exporter   = new PrometheusExporter(config('prometheus.namespace'), $prometheus);
             foreach (config('prometheus.collectors') as $collectorClass) {
                 $collector = $this->app->make($collectorClass);
                 $exporter->registerCollector($collector);
@@ -61,9 +59,9 @@ class PrometheusServiceProvider extends ServiceProvider
 
         $this->app->bind(Adapter::class, function ($app) {
             $factory = $app['prometheus.storage_adapter_factory'];
-            $driver = config('prometheus.storage_adapter');
+            $driver  = config('prometheus.storage_adapter');
             $configs = config('prometheus.storage_adapters');
-            $config = Arr::get($configs, $driver, []);
+            $config  = Arr::get($configs, $driver, []);
 
             return $factory->make($driver, $config);
         });
@@ -87,7 +85,7 @@ class PrometheusServiceProvider extends ServiceProvider
 
     private function loadRoutes()
     {
-        if (!config('prometheus.metrics_route_enabled')) {
+        if (! config('prometheus.metrics_route_enabled')) {
             return;
         }
 
@@ -108,7 +106,7 @@ class PrometheusServiceProvider extends ServiceProvider
             }
         } else {
             $routeConfig = [
-                'as' => 'metrics',
+                'as'   => 'metrics',
                 'uses' => LumenMetricsController::class . '@getMetrics',
             ];
 

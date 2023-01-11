@@ -33,11 +33,11 @@ class PrometheusExporter
      */
     public function __construct(string $namespace, CollectorRegistry $prometheus, array $collectors = [])
     {
-        $this->namespace = $namespace;
+        $this->namespace  = $namespace;
         $this->prometheus = $prometheus;
 
         foreach ($collectors as $collector) {
-            /* @var CollectorInterface $collector */
+            /** @var CollectorInterface $collector */
             $this->registerCollector($collector);
         }
     }
@@ -71,7 +71,7 @@ class PrometheusExporter
     {
         $name = $collector->getName();
 
-        if (!isset($this->collectors[$name])) {
+        if (! isset($this->collectors[$name])) {
             $this->collectors[$name] = $collector;
 
             $collector->registerMetrics($this);
@@ -97,7 +97,7 @@ class PrometheusExporter
      */
     public function getCollector($name): CollectorInterface
     {
-        if (!isset($this->collectors[$name])) {
+        if (! isset($this->collectors[$name])) {
             throw new InvalidArgumentException(sprintf('The collector "%s" is not registered.', $name));
         }
 
@@ -114,6 +114,7 @@ class PrometheusExporter
      * @return Counter
      *
      * @throws \Prometheus\Exception\MetricsRegistrationException
+     *
      * @see https://prometheus.io/docs/concepts/metric_types/#counter
      */
     public function registerCounter($name, $help, $labels = []): Counter
@@ -242,12 +243,12 @@ class PrometheusExporter
     /**
      * Export the metrics from all collectors.
      *
-     * @return MetricFamilySamples[]
+     * @return array<MetricFamilySamples>
      */
     public function export(): array
     {
         foreach ($this->collectors as $collector) {
-            /* @var CollectorInterface $collector */
+            /** @var CollectorInterface $collector */
             $collector->collect();
         }
 

@@ -2,14 +2,16 @@
 
 namespace Altelma\LaravelPrometheusExporter\Middleware;
 
+use Altelma\LaravelPrometheusExporter\Traits\MetricTrait;
 use Closure;
 use Illuminate\Support\Facades\Route as RouteFacade;
-use Prometheus\Histogram;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrometheusLaravelMiddleware
 {
+    use MetricTrait;
+
     /**
      * Handle an incoming request.
      *
@@ -22,31 +24,13 @@ class PrometheusLaravelMiddleware
     {
         $matchedRoute = $this->getMatchedRoute($request);
 
-        $start = microtime(true);
-        /** @var Response $response */
+        $start    = microtime(true);
         $response = $next($request);
         $duration = microtime(true) - $start;
-        /** @var PrometheusExporter $exporter */
-        $exporter = app('prometheus');
-        $histogram = $exporter->getOrRegisterHistogram(
-            'response_time_seconds',
-            'It observes response time.',
-            [
-                'method',
-                'route',
-                'status_code',
-            ],
-            config('prometheus.guzzle_buckets') ?? null
-        );
-        /** @var  Histogram $histogram */
-        $histogram->observe(
-            $duration,
-            [
-                $request->method(),
-                $matchedRoute->uri(),
-                $response->getStatusCode(),
-            ]
-        );
+
+        $this->requestCountMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode());
+        $this->requestLatencyMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode(), $duration);
+
         return $response;
     }
 

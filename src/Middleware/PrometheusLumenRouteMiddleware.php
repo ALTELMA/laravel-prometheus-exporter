@@ -2,12 +2,15 @@
 
 namespace Altelma\LaravelPrometheusExporter\Middleware;
 
+use Altelma\LaravelPrometheusExporter\Traits\MetricTrait;
 use Closure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrometheusLumenRouteMiddleware
 {
+    use MetricTrait;
+
     /**
      * Handle an incoming request.
      *
@@ -19,36 +22,18 @@ class PrometheusLumenRouteMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $route = $request->route();
-        if (is_null($route) || !isset($route[1]['uri'])) {
+        if (is_null($route) || ! isset($route[1]['uri'])) {
             return $next($request);
         }
 
         $matchedRoute = $route[1]['uri'];
 
-        $start = microtime(true);
+        $start    = microtime(true);
         $response = $next($request);
         $duration = microtime(true) - $start;
 
-        $exporter = app('prometheus');
-        $histogram = $exporter->getOrRegisterHistogram(
-            'response_time_seconds',
-            'It observes response time.',
-            [
-                'method',
-                'route',
-                'status_code',
-            ],
-            config('prometheus.guzzle_buckets') ?? null
-        );
-
-        $histogram->observe(
-            $duration,
-            [
-                $request->method(),
-                $matchedRoute,
-                $response->getStatusCode(),
-            ]
-        );
+        $this->requestCountMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode());
+        $this->requestLatencyMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode(), $duration);
 
         return $response;
     }
