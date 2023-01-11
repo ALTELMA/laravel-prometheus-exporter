@@ -32,8 +32,8 @@ class PrometheusLumenRouteMiddleware
         $response = $next($request);
         $duration = microtime(true) - $start;
 
-        $this->requestCountMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode());
-        $this->requestLatencyMetric($request->method(), $matchedRoute->uri(), $response->getStatusCode(), $duration);
+        $this->requestCountMetric($request->method(), $matchedRoute, $response->getStatusCode());
+        $this->requestLatencyMetric($request->method(), $matchedRoute, $response->getStatusCode(), $duration);
 
         return $response;
     }
